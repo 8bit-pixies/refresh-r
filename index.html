@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <title>Refresh-r by chappers</title>
+  </head>
+
+  <body>
+    <header>
+      <div class="inner">
+        <h1>Refresh-r</h1>
+        <h2></h2>
+        <a href="https://github.com/chappers/refresh-r" class="button"><small>View project on</small>GitHub</a>
+      </div>
+    </header>
+
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+          <ul>
+<li>  A Warning</li>
+<li>  Data Structures
+
+<ul>
+<li>  Vectors
+
+<ul>
+<li>  Notes</li>
+</ul>
+</li>
+<li>  Lists</li>
+<li>  DataFrames</li>
+<li>  Concluding Remarks</li>
+</ul>
+</li>
+<li>  Programming Structures
+
+<ul>
+<li>  For loops
+
+<ul>
+<li>  Apply</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul><h1>
+<a name="a-warning" class="anchor" href="#a-warning"><span class="octicon octicon-link"></span></a>A Warning</h1>
+
+<p>There are many pieces of criticisms on R, some legitable, some not. This
+chapter is not an attempt to clear this (mis)understanding, but perhaps
+to allow you to approach the topic of "high performance" R with an open
+mind.</p>
+
+<p>Firstly, lets consider SAS. What is SAS:</p>
+
+<ul>
+<li>  SAS is best described as a procedural language.</li>
+<li>  SAS has a heavy emphasis on black box procedures.</li>
+</ul><p>In contrast R:</p>
+
+<ul>
+<li>  R is often described as object-orientated, but it definitely has
+many functional programming aspects in it.</li>
+<li>  R allows you to define your own functions.</li>
+</ul><p>Of course this is not a definitive list of the differences between SAS
+and R but in my opinion is the most difficult one to accept. Too often
+when people learn a new programming language, they refuse to embrace the
+opportunities and differences in the languages, but rather attempt to
+enforce their own ideas and knowledge into a small and narrow box. So
+with that in mind, let me emphasis the following statement.</p>
+
+<blockquote>
+<p>Procedural programming and object-orientated/function programming are
+extremely different. Writing R scripts in a procedural style will
+work, but often at the cost of performance.</p>
+</blockquote>
+
+<p>So to prevent this, I will attempt to demonstrate idiomatic R code.</p>
+
+<h1>
+<a name="data-structures" class="anchor" href="#data-structures"><span class="octicon octicon-link"></span></a>Data Structures</h1>
+
+<h2>
+<a name="vectors" class="anchor" href="#vectors"><span class="octicon octicon-link"></span></a>Vectors</h2>
+
+<p>The power of R comes from vectors. Infact vectorization is the single
+most important idea in producing efficient R code.</p>
+
+<p>What does an R vector look like?</p>
+
+<div class="highlight highlight-r"><pre><span class="c">vec &lt;- c(1, 2, 3, 4)</span>
+</pre></div>
+
+<p>Lets break down what we can see here first:</p>
+
+<ul>
+<li>  <code>vec</code> : this is our variable</li>
+<li>  <code>&lt;-</code> : this is our assignment (in fact the statement could have been
+written as <code>vec = c(1,2,3,4)</code>
+</li>
+<li>  <code>c</code> : this is a function</li>
+<li>  <code>1,2,3,4</code> : these are the arguments in the function</li>
+</ul><p>So far, this isn't anything too different from what we have seen in SAS.</p>
+
+<p>In plain english, what the statement above does is:</p>
+
+<blockquote>
+<p>Assigns a vector of numbers (1,2,3,4) into the variable <code>vec</code></p>
+</blockquote>
+
+<p>You may be curious, what is the function <code>c</code>. To answer that question,
+simply type <code>?c</code> into the console. You will see in the help screen that
+<code>c</code> is function which forms a vector. Some people refer to the function
+<code>c</code> as the "concatentation" function. To see why, we can extend this
+vector by writing</p>
+
+<div class="highlight highlight-r"><pre><span class="c">c(vec, 5)</span>
+</pre></div>
+
+<p>which will return the vector (1,2,3,4,5) which is the vector above with
+5 concatentated onto it.</p>
+
+<p>You can access elements in a vector by their index:</p>
+
+<div class="highlight highlight-r"><pre><span class="c">vec[1]</span>
+</pre></div>
+
+<p>If you want to initialise vectors, you can simply type</p>
+
+<div class="highlight highlight-r"><pre><span class="c">vec &lt;- numeric(10)</span>
+</pre></div>
+
+<p>And it will generate a vector of size 10.</p>
+
+<h3>
+<a name="notes" class="anchor" href="#notes"><span class="octicon octicon-link"></span></a>Notes</h3>
+
+<ul>
+<li>  Elements in a vector must all be of the same type. try
+<code>vec &lt;- c(1, "abc"); class(vec)</code>, and it will be a character vector</li>
+<li>  To initialise large vectors it is best to "pre-build" them. It is
+much faster than "growing" a vector.</li>
+</ul><h2>
+<a name="lists" class="anchor" href="#lists"><span class="octicon octicon-link"></span></a>Lists</h2>
+
+<p>List can hold functions, and data of <em>different</em> types.</p>
+
+<div class="highlight highlight-r"><pre><span class="c">list(1, "s", sum)</span>
+</pre></div>
+
+<p>Lists are similar to hash tables or dictionaries in other programming
+language. They are similar to vectors except you can access elements by
+calling its index.</p>
+
+<div class="highlight highlight-r"><pre><span class="c">ls &lt;- list('a'=1, 'b'="s", 'func'=sum, 'ls'=list(1,2,3,"c"))</span>
+<span class="c">ls$a</span>
+<span class="c">ls['b']</span>
+<span class="c">ls$ls[[1]]</span>
+</pre></div>
+
+<h2>
+<a name="dataframes" class="anchor" href="#dataframes"><span class="octicon octicon-link"></span></a>DataFrames</h2>
+
+<p>This is the R version of the SAS dataset. DataFrames are really just a
+special version of a list. Infact, DataFrame is more or less just a
+"list of lists".</p>
+
+<div class="highlight highlight-r"><pre><span class="c">ls &lt;- list('a'= c(1,2,3,4), 'b'=c("a","b","c","d"))</span>
+<span class="c">dls &lt;- data.frame(ls)</span>
+<span class="c">dls$a</span>
+<span class="c">dls$b</span>
+</pre></div>
+
+<h2>
+<a name="concluding-remarks" class="anchor" href="#concluding-remarks"><span class="octicon octicon-link"></span></a>Concluding Remarks</h2>
+
+<p>Data structures are a extremely deep topic in R, and a complicated one
+too. Here I have merely given you an overview of them, but a deep
+understanding of how they work, and the most efficient way to approach
+them is necessary to create efficient R code.</p>
+
+<h1>
+<a name="programming-structures" class="anchor" href="#programming-structures"><span class="octicon octicon-link"></span></a>Programming Structures</h1>
+
+<p><code>if</code>, <code>else</code>, <code>for</code> (<code>do</code>), all work in the same way as SAS, with their
+analogous boolean operators, <code>&amp;&amp;</code> (<code>and</code>), <code>||</code> (<code>or</code>). Though there are
+some differences.</p>
+
+<h2>
+<a name="for-loops" class="anchor" href="#for-loops"><span class="octicon octicon-link"></span></a>For loops</h2>
+
+<p><code>for</code> loops in R doesn't have to be centered arond indices!</p>
+
+<div class="highlight highlight-r"><pre><span class="c">for (el in c(5,4,6,7,8)) {</span>
+<span class="c">  print(el)</span>
+<span class="c">}</span>
+</pre></div>
+
+<p>Notice that there isn't any reference to indices. This works for lists
+as well</p>
+
+<div class="highlight highlight-r"><pre><span class="c">for (el in list('a'=c(1,2,3), 'b'="s")){</span>
+<span class="c">  print(el)</span>
+<span class="c">}</span>
+</pre></div>
+
+<h3>
+<a name="apply" class="anchor" href="#apply"><span class="octicon octicon-link"></span></a>Apply</h3>
+
+<p>But R also has other ways of looping through things. This is through the
+functional programming idea of "apply".</p>
+
+<p>As a small detour, in mathematics, we can represent sets, like a set of
+all square numbers to be like:</p>
+
+<pre><code>{x^2, for all x in N}
+</code></pre>
+
+<p>This can be extended to programming.</p>
+
+<p>So lets get a list of all square numbers from one to ten.</p>
+
+<div class="highlight highlight-r"><pre><span class="c">v &lt;- c()</span>
+<span class="c">for (i in 1:10) {</span>
+<span class="c">  v &lt;- c(v, i*i)</span>
+<span class="c">}</span>
+</pre></div>
+
+<p>An alternative way (and much more efficient) is to use the apply
+function.</p>
+
+<div class="highlight highlight-r"><pre><span class="c">sapply(1:10, function(x) x*x)</span>
+</pre></div>
+
+<p>This is the idiomatic R way of iterating and applying functions onto a
+vectorized object.</p>
+        </section>
+
+        <aside id="sidebar">
+          <a href="https://github.com/chappers/refresh-r/zipball/master" class="button">
+            <small>Download</small>
+            .zip file
+          </a>
+          <a href="https://github.com/chappers/refresh-r/tarball/master" class="button">
+            <small>Download</small>
+            .tar.gz file
+          </a>
+
+          <p class="repo-owner"><a href="https://github.com/chappers/refresh-r"></a> is maintained by <a href="https://github.com/chappers">chappers</a>.</p>
+
+          <p>This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the Architect theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.</p>
+        </aside>
+      </div>
+    </div>
+
+  
+  </body>
+</html>
