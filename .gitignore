@@ -218,4 +218,3 @@ pip-log.txt
 # ignore bat files and txt
 *.txt
 *.bat
-*.html

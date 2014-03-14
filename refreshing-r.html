@@ -1,0 +1,136 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title></title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; }
+code > span.dt { color: #902000; }
+code > span.dv { color: #40a070; }
+code > span.bn { color: #40a070; }
+code > span.fl { color: #40a070; }
+code > span.ch { color: #4070a0; }
+code > span.st { color: #4070a0; }
+code > span.co { color: #60a0b0; font-style: italic; }
+code > span.ot { color: #007020; }
+code > span.al { color: #ff0000; font-weight: bold; }
+code > span.fu { color: #06287e; }
+code > span.er { color: #ff0000; font-weight: bold; }
+  </style>
+</head>
+<body>
+<div id="TOC">
+<ul>
+<li><a href="#a-warning">A Warning</a></li>
+<li><a href="#data-structures">Data Structures</a><ul>
+<li><a href="#vectors">Vectors</a><ul>
+<li><a href="#notes">Notes</a></li>
+</ul></li>
+<li><a href="#lists">Lists</a></li>
+<li><a href="#dataframes">DataFrames</a></li>
+<li><a href="#concluding-remarks">Concluding Remarks</a></li>
+</ul></li>
+<li><a href="#programming-structures">Programming Structures</a><ul>
+<li><a href="#for-loops">For loops</a><ul>
+<li><a href="#apply">Apply</a></li>
+</ul></li>
+</ul></li>
+</ul>
+</div>
+<h1 id="a-warning">A Warning</h1>
+<p>There are many pieces of criticisms on R, some legitable, some not. This chapter is not an attempt to clear this (mis)understanding, but perhaps to allow you to approach the topic of &quot;high performance&quot; R with an open mind.</p>
+<p>Firstly, lets consider SAS. What is SAS:</p>
+<ul>
+<li>SAS is best described as a procedural language.</li>
+<li>SAS has a heavy emphasis on black box procedures.</li>
+</ul>
+<p>In contrast R:</p>
+<ul>
+<li>R is often described as object-orientated, but it definitely has many functional programming aspects in it.</li>
+<li>R allows you to define your own functions.</li>
+</ul>
+<p>Of course this is not a definitive list of the differences between SAS and R but in my opinion is the most difficult one to accept. Too often when people learn a new programming language, they refuse to embrace the opportunities and differences in the languages, but rather attempt to enforce their own ideas and knowledge into a small and narrow box. So with that in mind, let me emphasis the following statement.</p>
+<blockquote>
+<p>Procedural programming and object-orientated/function programming are extremely different. Writing R scripts in a procedural style will work, but often at the cost of performance.</p>
+</blockquote>
+<p>So to prevent this, I will attempt to demonstrate idiomatic R code.</p>
+<h1 id="data-structures">Data Structures</h1>
+<h2 id="vectors">Vectors</h2>
+<p>The power of R comes from vectors. Infact vectorization is the single most important idea in producing efficient R code.</p>
+<p>What does an R vector look like?</p>
+<pre class="sourceCode r"><code class="sourceCode r">vec &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>)</code></pre>
+<p>Lets break down what we can see here first:</p>
+<ul>
+<li><code>vec</code> : this is our variable</li>
+<li><code>&lt;-</code> : this is our assignment (in fact the statement could have been written as <code>vec = c(1,2,3,4)</code></li>
+<li><code>c</code> : this is a function</li>
+<li><code>1,2,3,4</code> : these are the arguments in the function</li>
+</ul>
+<p>So far, this isn't anything too different from what we have seen in SAS.</p>
+<p>In plain english, what the statement above does is:</p>
+<blockquote>
+<p>Assigns a vector of numbers (1,2,3,4) into the variable <code>vec</code></p>
+</blockquote>
+<p>You may be curious, what is the function <code>c</code>. To answer that question, simply type <code>?c</code> into the console. You will see in the help screen that <code>c</code> is function which forms a vector. Some people refer to the function <code>c</code> as the &quot;concatentation&quot; function. To see why, we can extend this vector by writing</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">c</span>(vec, <span class="dv">5</span>)</code></pre>
+<p>which will return the vector (1,2,3,4,5) which is the vector above with 5 concatentated onto it.</p>
+<p>You can access elements in a vector by their index:</p>
+<pre class="sourceCode r"><code class="sourceCode r">vec[<span class="dv">1</span>]</code></pre>
+<p>If you want to initialise vectors, you can simply type</p>
+<pre class="sourceCode r"><code class="sourceCode r">vec &lt;-<span class="st"> </span><span class="kw">numeric</span>(<span class="dv">10</span>)</code></pre>
+<p>And it will generate a vector of size 10.</p>
+<h3 id="notes">Notes</h3>
+<ul>
+<li>Elements in a vector must all be of the same type. try <code>vec &lt;- c(1, &quot;abc&quot;); class(vec)</code>, and it will be a character vector</li>
+<li>To initialise large vectors it is best to &quot;pre-build&quot; them. It is much faster than &quot;growing&quot; a vector.</li>
+</ul>
+<h2 id="lists">Lists</h2>
+<p>List can hold functions, and data of <em>different</em> types.</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">list</span>(<span class="dv">1</span>, <span class="st">&quot;s&quot;</span>, sum)</code></pre>
+<p>Lists are similar to hash tables or dictionaries in other programming language. They are similar to vectors except you can access elements by calling its index.</p>
+<pre class="sourceCode r"><code class="sourceCode r">ls &lt;-<span class="st"> </span><span class="kw">list</span>(<span class="st">&#39;a&#39;</span>=<span class="dv">1</span>, <span class="st">&#39;b&#39;</span>=<span class="st">&quot;s&quot;</span>, <span class="st">&#39;func&#39;</span>=sum, <span class="st">&#39;ls&#39;</span>=<span class="kw">list</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>,<span class="st">&quot;c&quot;</span>))
+ls$a
+ls[<span class="st">&#39;b&#39;</span>]
+ls$ls[[<span class="dv">1</span>]]</code></pre>
+<h2 id="dataframes">DataFrames</h2>
+<p>This is the R version of the SAS dataset. DataFrames are really just a special version of a list. Infact, DataFrame is more or less just a &quot;list of lists&quot;.</p>
+<pre class="sourceCode r"><code class="sourceCode r">ls &lt;-<span class="st"> </span><span class="kw">list</span>(<span class="st">&#39;a&#39;</span>=<span class="st"> </span><span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">4</span>), <span class="st">&#39;b&#39;</span>=<span class="kw">c</span>(<span class="st">&quot;a&quot;</span>,<span class="st">&quot;b&quot;</span>,<span class="st">&quot;c&quot;</span>,<span class="st">&quot;d&quot;</span>))
+dls &lt;-<span class="st"> </span><span class="kw">data.frame</span>(ls)
+dls$a
+dls$b</code></pre>
+<h2 id="concluding-remarks">Concluding Remarks</h2>
+<p>Data structures are a extremely deep topic in R, and a complicated one too. Here I have merely given you an overview of them, but a deep understanding of how they work, and the most efficient way to approach them is necessary to create efficient R code.</p>
+<h1 id="programming-structures">Programming Structures</h1>
+<p><code>if</code>, <code>else</code>, <code>for</code> (<code>do</code>), all work in the same way as SAS, with their analogous boolean operators, <code>&amp;&amp;</code> (<code>and</code>), <code>||</code> (<code>or</code>). Though there are some differences.</p>
+<h2 id="for-loops">For loops</h2>
+<p><code>for</code> loops in R doesn't have to be centered arond indices!</p>
+<pre class="sourceCode r"><code class="sourceCode r">for (el in <span class="kw">c</span>(<span class="dv">5</span>,<span class="dv">4</span>,<span class="dv">6</span>,<span class="dv">7</span>,<span class="dv">8</span>)) {
+  <span class="kw">print</span>(el)
+}</code></pre>
+<p>Notice that there isn't any reference to indices. This works for lists as well</p>
+<pre class="sourceCode r"><code class="sourceCode r">for (el in <span class="kw">list</span>(<span class="st">&#39;a&#39;</span>=<span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>), <span class="st">&#39;b&#39;</span>=<span class="st">&quot;s&quot;</span>)){
+  <span class="kw">print</span>(el)
+}</code></pre>
+<h3 id="apply">Apply</h3>
+<p>But R also has other ways of looping through things. This is through the functional programming idea of &quot;apply&quot;.</p>
+<p>As a small detour, in mathematics, we can represent sets, like a set of all square numbers to be like:</p>
+<pre><code>{x^2, for all x in N}</code></pre>
+<p>This can be extended to programming.</p>
+<p>So lets get a list of all square numbers from one to ten.</p>
+<pre class="sourceCode r"><code class="sourceCode r">v &lt;-<span class="st"> </span><span class="kw">c</span>()
+for (i in <span class="dv">1</span>:<span class="dv">10</span>) {
+  v &lt;-<span class="st"> </span><span class="kw">c</span>(v, i*i)
+}</code></pre>
+<p>An alternative way (and much more efficient) is to use the apply function.</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">sapply</span>(<span class="dv">1</span>:<span class="dv">10</span>, function(x) x*x)</code></pre>
+<p>This is the idiomatic R way of iterating and applying functions onto a vectorized object.</p>
+</body>
+</html>
