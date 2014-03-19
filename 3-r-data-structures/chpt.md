@@ -4,8 +4,8 @@ Data Structures
 Vectors
 -------
 
-The power of R comes from vectors. Infact vectorization is the single most important
-idea in producing efficient R code.
+The power of R comes from vectors (you can say everything is a vector). 
+Vectorization is the single most important idea in producing efficient R code.
 
 What does an R vector look like?
 
